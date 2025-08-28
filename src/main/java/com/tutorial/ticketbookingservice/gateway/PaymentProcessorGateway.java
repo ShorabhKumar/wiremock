@@ -4,6 +4,7 @@ package com.tutorial.ticketbookingservice.gateway;
 import com.tutorial.ticketbookingservice.dto.PaymentProcessorResponse;
 import com.tutorial.ticketbookingservice.dto.PaymentProcessorResponseRequest;
 import com.tutorial.ticketbookingservice.dto.FraudCheckResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,11 +14,16 @@ import java.time.LocalDate;
 public class PaymentProcessorGateway {
 
     private final RestTemplate restTemplate;
-    public final String baseUrl = "http://localhost:8081";
+    public  String baseUrl;
 
-    public PaymentProcessorGateway(RestTemplate restTemplate) {
+    public PaymentProcessorGateway(@Value("${pay.money.host}") String host,
+                                   @Value("${pay.money.port}") int port,
+                                   RestTemplate restTemplate) {
+
+        this.baseUrl = "http://" + host + ":" + port;
         this.restTemplate = restTemplate;
     }
+
 
     public PaymentProcessorResponse makePayment(String creditCardNumber, LocalDate creditCardExpiry, Double amount) {
             final PaymentProcessorResponseRequest request = new PaymentProcessorResponseRequest(creditCardNumber, creditCardExpiry, amount);
